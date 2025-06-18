@@ -4,6 +4,46 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
+    <link rel="stylesheet" href="./css/main.css" />
   </head>
-  <body></body>
+  <body>
+    <div class="container">
+      <form action="" class="task-creation-form">
+        <label for="task-title">Title</label>
+        <input type="text" id="task-title" class="task-input" />
+
+        <label for="task-description">Description</label>
+        <textarea id="task-description" class="task-input"></textarea>
+
+        <fieldset>
+          <div class="input-group">
+            <label for="">Date</label>
+            <input type="date" id="task-date" class="task-input" />
+          </div>
+          <div class="input-group">
+            <label for="">Type</label>
+            <select id="task-type" class="task-input">
+              <option value="work">Work</option>
+              <option value="study">Study</option>
+              <option value="sport">Sport</option>
+            </select>
+          </div>
+        </fieldset>
+
+        <label for="">
+          Importance <input type="checkbox" id="task-important" />
+        </label>
+        <hr />
+        <input type="submit" class="submit-btn" />
+      </form>
+    </div>
+
+    <div class="container">
+      <div class="task-list">
+        <div class="tasks">
+          <!-- place for tasks -->
+        </div>
+      </div>
+    </div>
+  </body>
 </html>
