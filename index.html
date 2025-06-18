@@ -1,47 +1,70 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-    <link rel="stylesheet" href="./css/main.css" />
+    <title>Менеджер задач</title>
   </head>
   <body>
+    <h1>Менеджер задач</h1>
+
     <div class="container">
       <form action="" class="task-creation-form">
-        <label for="task-title">Title</label>
-        <input type="text" id="task-title" class="task-input" />
+        <h2>Создать новую задачу</h2>
 
-        <label for="task-description">Description</label>
-        <textarea id="task-description" class="task-input"></textarea>
+        <label for="task-title">Название</label>
+        <input
+          type="text"
+          id="task-title"
+          class="task-input"
+          placeholder="Введите название задачи"
+          required
+        />
+
+        <label for="task-description">Описание</label>
+        <textarea
+          id="task-description"
+          class="task-input"
+          placeholder="Опишите детали задачи"
+        ></textarea>
 
         <fieldset>
           <div class="input-group">
-            <label for="">Date</label>
+            <label for="task-date">Дата</label>
             <input type="date" id="task-date" class="task-input" />
           </div>
           <div class="input-group">
-            <label for="">Type</label>
+            <label for="task-type">Тип</label>
             <select id="task-type" class="task-input">
-              <option value="work">Work</option>
-              <option value="study">Study</option>
-              <option value="sport">Sport</option>
+              <option value="work">Работа</option>
+              <option value="study">Учёба</option>
+              <option value="sport">Спорт</option>
             </select>
           </div>
         </fieldset>
 
-        <label for="">
-          Importance <input type="checkbox" id="task-important" />
-        </label>
-        <hr />
-        <input type="submit" class="submit-btn" />
-      </form>
-    </div>
+        <div class="checkbox-group">
+          <input type="checkbox" id="task-important" />
+          <label for="task-important">Важная задача</label>
+        </div>
 
-    <div class="container">
+        <hr />
+        <button type="button" class="task-creation-btn" id="add-btn">
+          Добавить задачу
+        </button>
+      </form>
+
       <div class="task-list">
+        <h2>Список задач</h2>
         <div class="tasks">
-          <!-- place for tasks -->
+          <div class="empty-state" id="empty-state">
+            <img
+              src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCI+PHBhdGggZmlsbD0iI2NjYyIgZD0iTTc0LjggMjguM0g2NS4zVjE4LjhjMC0yLjQtMS45LTQuMy00LjMtNC4zcy00LjMgMS45LTQuMyA0LjN2OS41SDI1LjJjLTIuNCAwLTQuMyAxLjktNC4zIDQuM3MxLjkgNC4zIDQuMyA0LjNoNDkuM3Y5LjVjMCAyLjQgMS45IDQuMyA0LjMgNC4zczQuMy0xLjkgNC4zLTQuM1YzNi45aDkuNWMyLjQgMCA0LjMtMS45IDQuMy00LjNzLTEuOS00LjMtNC4zLTQuM3pNNDguNSAzNy44Yy0yLjQgMC00LjMgMS45LTQuMyA0LjNzMS45IDQuMyA0LjMgNC4zIDQuMy0xLjkgNC4zLTQuMy0xLjktNC4zLTQuMy00LjN6bTAgMTMuNWMtNS4xIDAtOS4zLTQuMi05LjMtOS4zczQuMi05LjMgOS4zLTkuMyA5LjMgNC4yIDkuMyA5LjMtNC4yIDkuMy05LjMgOS4zeiI+PC9wYXRoPjwvc3ZnPg=="
+              alt="No tasks"
+            />
+            <h3>Задач пока нет</h3>
+            <p>Начните добавлять задачи с помощью формы слева</p>
+          </div>
         </div>
       </div>
     </div>
