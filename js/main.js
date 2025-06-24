@@ -43,6 +43,11 @@ document.addEventListener("DOMContentLoaded", () => {
     return saved ? JSON.parse(saved) : []; // Если есть данные — распарсить, иначе вернуть пустой массив
   }
 
+  // Сохраняем список задач в localStorage
+  function saveTasks(tasks) {
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+  }
+
   // Функция создания DOM-элемента задачи
   function createTaskCard({ title, description, date, type, important }) {
     const card = document.createElement("div"); // создаём <div>
