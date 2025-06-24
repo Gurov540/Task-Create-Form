@@ -182,7 +182,7 @@ hr {
 }
 
 .task-card.important {
-  border-left-width: 6px;
+  border-left-width: 4px;
 }
 
 .task-card.important::after {
