@@ -1,90 +1,101 @@
-document.addEventListener("DOMContentLoaded", function () {
+// Ждём, пока весь HTML загрузится и только потом запускаем JS
+document.addEventListener("DOMContentLoaded", () => {
+  // Получаем нужные DOM-элементы
   const addBtn = document.getElementById("add-btn");
   const tasksContainer = document.querySelector(".tasks");
   const emptyState = document.getElementById("empty-state");
 
-  addBtn.addEventListener("click", function () {
-    const title = document.getElementById("task-title").value;
-    const description = document.getElementById("task-description").value;
-    const date = document.getElementById("task-date").value;
-    const type = document.getElementById("task-type").value;
-    const important = document.getElementById("task-important").checked;
+  // Получаем элементы формы задачи
+  const titleInput = document.getElementById("task-title");
+  const descInput = document.getElementById("task-description");
+  const dateInput = document.getElementById("task-date");
+  const typeInput = document.getElementById("task-type");
+  const importantInput = document.getElementById("task-important");
 
+  // Устанавливаем текущую дату по умолчанию в поле "Дата"
+  const today = new Date();
+  const formattedDate = today.toISOString().split("T")[0]; // YYYY-MM-DD
+  dateInput.value = formattedDate;
+
+  // Функция для форматирования даты в читаемый формат
+  function formatDate(dateStr) {
+    if (!dateStr) return "Дата не указана";
+    const date = new Date(dateStr);
+    return date.toLocaleDateString("ru-RU", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+  }
+
+  // Функция для очистки формы после добавления задачи
+  function resetForm() {
+    titleInput.value = "";
+    descInput.value = "";
+    dateInput.value = formattedDate;
+    typeInput.value = "work";
+    importantInput.checked = false;
+  }
+
+  // Функция создания DOM-элемента задачи
+  function createTaskCard({ title, description, date, type, important }) {
+    const card = document.createElement("div"); // создаём <div>
+    card.className = `task-card ${type}`; // класс зависит от типа задачи
+    if (important) card.classList.add("important"); // если важная — добавляем класс
+
+    // Русские названия типов задач
+    const typeNames = { work: "Работа", study: "Учёба", sport: "Спорт" };
+
+    // Шаблон HTML-карточки задачи
+    card.innerHTML = `
+      <div class="task-header">
+          <h3 class="task-title">${title}</h3>
+          <span class="task-type type-${type}">${typeNames[type]}</span>
+      </div>
+      <div class="task-body">
+          <p class="task-description">${description || "Описание отсутствует"}</p>
+      </div>
+      <div class="task-footer">
+          <span class="task-date">${formatDate(date)}</span>
+          <button class="delete-btn">🗑️</button>
+      </div>
+    `;
+
+    // Добавляем обработчик на кнопку удаления задачи
+    card.querySelector(".delete-btn").addEventListener("click", () => {
+      card.remove(); // удаляем карточку из DOM
+      // Проверка: если больше нет задач — показать сообщение "список пуст"
+      if (!tasksContainer.querySelector(".task-card")) {
+        emptyState.style.display = "block";
+      }
+    });
+
+    return card; // возвращаем готовую карточку
+  }
+
+  // Обработка клика по кнопке "Добавить"
+  addBtn.addEventListener("click", () => {
+    const title = titleInput.value.trim();
+
+    // Если пользователь не ввёл название задачи — показываем alert
     if (!title) {
       alert("Пожалуйста, введите название задачи");
       return;
     }
 
-    // Создаем карточку задачи
-    const taskCard = document.createElement("div");
-    taskCard.className = `task-card ${type}`;
-    if (important) {
-      taskCard.classList.add("important");
-    }
-
-    // Форматируем дату для отображения
-    let displayDate = "Дата не указана";
-    if (date) {
-      const dateObj = new Date(date);
-      displayDate = dateObj.toLocaleDateString("ru-RU", {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-      });
-    }
-
-    // Получаем русское название типа
-    const typeNames = {
-      work: "Работа",
-      study: "Учёба",
-      sport: "Спорт",
+    // Сбор данных из формы
+    const taskData = {
+      title,
+      description: descInput.value,
+      date: dateInput.value,
+      type: typeInput.value,
+      important: importantInput.checked,
     };
 
-    taskCard.innerHTML = `
-              <div class="task-header">
-                  <h3 class="task-title">${title}</h3>
-                  <span class="task-type type-${type}">
-                    ${typeNames[type]}
-                  </span>
-              </div>
-              <div class="task-body">
-                  <p class="task-description">
-                    ${description || "Описание отсутствует"}
-                  </p>
-              </div>
-              <div class="task-footer">
-                  <span class="task-date">${displayDate}</span>
-                  <button class="delete-btn">🗑️</button>
-              </div>
-          `;
-
-    // Добавляем карточку в контейнер
-    tasksContainer.insertBefore(taskCard, emptyState);
-
-    // Скрываем сообщение о пустом списке
-    emptyState.style.display = "none";
-
-    // Очищаем форму
-    document.getElementById("task-title").value = "";
-    document.getElementById("task-description").value = "";
-    document.getElementById("task-date").value = "";
-    document.getElementById("task-type").value = "work";
-    document.getElementById("task-important").checked = false;
-
-    // Добавляем обработчик удаления
-    const deleteBtn = taskCard.querySelector(".delete-btn");
-    deleteBtn.addEventListener("click", function () {
-      taskCard.remove();
-
-      // Если задач не осталось, показываем сообщение
-      if (tasksContainer.querySelectorAll(".task-card").length === 0) {
-        emptyState.style.display = "block";
-      }
-    });
+    // Создаём карточку и добавляем её в список
+    const taskCard = createTaskCard(taskData);
+    tasksContainer.insertBefore(taskCard, emptyState); // вставляем перед сообщением "пусто"
+    emptyState.style.display = "none"; // скрываем "список пуст"
+    resetForm(); // очищаем форму
   });
-
-  // Устанавливаем текущую дату по умолчанию
-  const today = new Date();
-  const formattedDate = today.toISOString().split("T")[0];
-  document.getElementById("task-date").value = formattedDate;
 });
