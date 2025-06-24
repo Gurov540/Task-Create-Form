@@ -37,6 +37,12 @@ document.addEventListener("DOMContentLoaded", () => {
     importantInput.checked = false;
   }
 
+  // Загружаем задачи из localStorage (если они есть)
+  function loadTasks() {
+    const saved = localStorage.getItem("tasks");
+    return saved ? JSON.parse(saved) : []; // Если есть данные — распарсить, иначе вернуть пустой массив
+  }
+
   // Функция создания DOM-элемента задачи
   function createTaskCard({ title, description, date, type, important }) {
     const card = document.createElement("div"); // создаём <div>
@@ -53,7 +59,9 @@ document.addEventListener("DOMContentLoaded", () => {
           <span class="task-type type-${type}">${typeNames[type]}</span>
       </div>
       <div class="task-body">
-          <p class="task-description">${description || "Описание отсутствует"}</p>
+          <p class="task-description">${
+            description || "Описание отсутствует"
+          }</p>
       </div>
       <div class="task-footer">
           <span class="task-date">${formatDate(date)}</span>
