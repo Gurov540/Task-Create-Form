@@ -96,7 +96,7 @@ document.addEventListener("DOMContentLoaded", () => {
       </div>
       <div class="task-footer">
           <span class="task-date">${formatDate(date)}</span>
-          <button class="delete-btn">🗑️</button>
+          <button class="delete-btn"><i class="fas fa-trash"></i></button>
       </div>
     `;
 
