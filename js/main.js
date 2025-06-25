@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const addBtn = document.getElementById("add-btn");
   const tasksContainer = document.querySelector(".tasks");
   const emptyState = document.getElementById("empty-state");
+  const taskCounter = document.getElementById("task-counter");
 
   // Получаем элементы формы
   const titleInput = document.getElementById("task-title");
@@ -23,6 +24,13 @@ document.addEventListener("DOMContentLoaded", () => {
     study: "Учёба",
     sport: "Спорт",
   };
+
+  // функция счетчик задач
+  function updateTaskStatistics() {
+    const tasks = loadTasks();
+    let taskCount = tasks.length;
+    taskCounter.textContent = taskCount;
+  }
 
   // Функция форматирования даты (например: 21 июня 2025 г.)
   function formatDate(dateStr) {
@@ -57,17 +65,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // 🔥 ФУНКЦИЯ УДАЛЕНИЯ ЗАДАЧИ ПО ID
   function deleteTaskById(id) {
-    // Удаление DOM-элемента с нужным data-id
-    const card = document.querySelector(`.task-card[data-id="${id}"]`);
-    if (card) card.remove();
+    let tasks = loadTasks();
+    tasks = tasks.filter((task) => task.id !== id);
+    saveTasks(tasks); // Сохраняем обновлённый список
+    const card = document.querySelector(`[data-id="${id}"]`);
+    if (card) card.remove(); // Удаляем из DOM
 
-    // Удаление задачи из localStorage
-    const updatedTasks = loadTasks().filter((task) => task.id !== id);
-    saveTasks(updatedTasks);
+    updateTaskStatistics(); // ✅ обновляем счётчик задач
 
-    // Если задач больше нет — показываем сообщение "список пуст"
-    if (!document.querySelector(".task-card")) {
-      emptyState.style.display = "block";
+    if (tasks.length === 0) {
+      emptyState.style.display = "block"; // Показываем "нет задач"
     }
   }
 
@@ -137,8 +144,8 @@ document.addEventListener("DOMContentLoaded", () => {
       important: importantInput.checked,
     };
 
-    // Создаём карточку задачи и сохраняем её
-    createTaskCard(task, true);
+    createTaskCard(task, true); // Добавляем в DOM
+    updateTaskStatistics();
 
     // Очищаем форму
     resetForm();
@@ -148,6 +155,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const storedTasks = loadTasks();
   if (storedTasks.length > 0) {
     storedTasks.forEach((task) => createTaskCard(task));
+    updateTaskStatistics();
   } else {
     emptyState.style.display = "block";
   }
