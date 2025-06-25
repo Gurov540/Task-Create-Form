@@ -1,30 +1,30 @@
-// Ждём полной загрузки HTML-документа
+// Ждём полной загрузки HTML-документа перед выполнением кода
 document.addEventListener("DOMContentLoaded", () => {
-  // Получаем все необходимые элементы из DOM
+  // Получаем DOM-элементы
   const addBtn = document.getElementById("add-btn");
   const tasksContainer = document.querySelector(".tasks");
   const emptyState = document.getElementById("empty-state");
 
-  // Элементы формы задачи
+  // Получаем элементы формы
   const titleInput = document.getElementById("task-title");
   const descInput = document.getElementById("task-description");
   const dateInput = document.getElementById("task-date");
   const typeInput = document.getElementById("task-type");
   const importantInput = document.getElementById("task-important");
 
-  // Устанавливаем текущую дату в поле "Дата"
+  // Устанавливаем текущую дату по умолчанию
   const today = new Date();
-  const formattedDate = today.toISOString().split("T")[0]; // Преобразуем в формат YYYY-MM-DD
+  const formattedDate = today.toISOString().split("T")[0];
   dateInput.value = formattedDate;
 
-  // Русские названия типов задач
+  // Названия типов задач на русском
   const typeNames = {
     work: "Работа",
     study: "Учёба",
     sport: "Спорт",
   };
 
-  // Форматирование даты в читаемый формат
+  // Функция форматирования даты (например: 21 июня 2025 г.)
   function formatDate(dateStr) {
     if (!dateStr) return "Дата не указана";
     const date = new Date(dateStr);
@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Сброс значений формы к начальному состоянию
+  // Сброс значений формы после добавления задачи
   function resetForm() {
     titleInput.value = "";
     descInput.value = "";
@@ -44,30 +44,46 @@ document.addEventListener("DOMContentLoaded", () => {
     importantInput.checked = false;
   }
 
-  // Загружаем задачи из localStorage (если они есть)
+  // Получение задач из localStorage (массив)
   function loadTasks() {
     const saved = localStorage.getItem("tasks");
-    return saved ? JSON.parse(saved) : []; // Если есть данные — распарсить, иначе вернуть пустой массив
+    return saved ? JSON.parse(saved) : [];
   }
 
-  // Сохраняем список задач в localStorage
+  // Сохранение массива задач в localStorage
   function saveTasks(tasks) {
     localStorage.setItem("tasks", JSON.stringify(tasks));
   }
 
-  // Создание карточки задачи и добавление её в DOM
+  // 🔥 ФУНКЦИЯ УДАЛЕНИЯ ЗАДАЧИ ПО ID
+  function deleteTaskById(id) {
+    // Удаление DOM-элемента с нужным data-id
+    const card = document.querySelector(`.task-card[data-id="${id}"]`);
+    if (card) card.remove();
+
+    // Удаление задачи из localStorage
+    const updatedTasks = loadTasks().filter((task) => task.id !== id);
+    saveTasks(updatedTasks);
+
+    // Если задач больше нет — показываем сообщение "список пуст"
+    if (!document.querySelector(".task-card")) {
+      emptyState.style.display = "block";
+    }
+  }
+
+  // Функция создания карточки задачи
   function createTaskCard(task, save = false) {
     const { id, title, description, date, type, important } = task;
 
-    // Создаём HTML-элемент задачи
+    // Создаём DOM-элемент карточки
     const card = document.createElement("div");
     card.className = `task-card ${type}`;
     if (important) card.classList.add("important");
 
-    // Сохраняем уникальный идентификатор задачи в атрибут data-id
+    // Привязываем уникальный id через data-атрибут
     card.dataset.id = id;
 
-    // HTML-разметка карточки задачи
+    // HTML разметка задачи
     card.innerHTML = `
       <div class="task-header">
           <h3 class="task-title">${title}</h3>
@@ -84,45 +100,36 @@ document.addEventListener("DOMContentLoaded", () => {
       </div>
     `;
 
-    // Обработчик кнопки удаления задачи
+    // Навешиваем обработчик на кнопку удаления
     card.querySelector(".delete-btn").addEventListener("click", () => {
-      card.remove(); // Удаляем DOM-элемент
-
-      // Удаляем задачу из localStorage по id
-      const tasks = loadTasks().filter((t) => t.id !== id);
-      saveTasks(tasks);
-
-      // Если задач не осталось — показать "список пуст"
-      if (!tasksContainer.querySelector(".task-card")) {
-        emptyState.style.display = "block";
-      }
+      deleteTaskById(id); // Вызываем универсальную функцию удаления
     });
 
-    // Добавляем карточку в контейнер задач
+    // Вставляем карточку задачи в DOM перед блоком emptyState
     tasksContainer.insertBefore(card, emptyState);
     emptyState.style.display = "none";
 
-    // Если флаг `save` — true, то сохраняем задачу в localStorage
+    // Если нужно — сохраняем задачу в localStorage
     if (save) {
-      const tasks = loadTasks(); // Загружаем текущие задачи
-      tasks.push(task); // Добавляем новую
-      saveTasks(tasks); // Сохраняем обратно
+      const tasks = loadTasks();
+      tasks.push(task);
+      saveTasks(tasks);
     }
   }
 
   // Обработка нажатия на кнопку "Добавить"
   addBtn.addEventListener("click", () => {
-    const title = titleInput.value.trim(); // Убираем лишние пробелы
+    const title = titleInput.value.trim();
 
-    // Если название задачи не указано — выводим сообщение
+    // Проверка: если поле названия пустое — выводим сообщение
     if (!title) {
       alert("Пожалуйста, введите название задачи");
       return;
     }
 
-    // Создаём объект задачи
+    // Создаём объект новой задачи
     const task = {
-      id: Date.now(), // Уникальный ID на основе текущего времени
+      id: Date.now(), // Уникальный идентификатор (по времени)
       title,
       description: descInput.value,
       date: dateInput.value,
@@ -130,10 +137,10 @@ document.addEventListener("DOMContentLoaded", () => {
       important: importantInput.checked,
     };
 
-    // Создаём и отображаем задачу, сохраняем в localStorage
+    // Создаём карточку задачи и сохраняем её
     createTaskCard(task, true);
 
-    // Очищаем форму после добавления
+    // Очищаем форму
     resetForm();
   });
 
@@ -142,6 +149,6 @@ document.addEventListener("DOMContentLoaded", () => {
   if (storedTasks.length > 0) {
     storedTasks.forEach((task) => createTaskCard(task));
   } else {
-    emptyState.style.display = "block"; // Если задач нет — показать "список пуст"
+    emptyState.style.display = "block";
   }
 });
