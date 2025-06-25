@@ -147,6 +147,29 @@ hr {
   box-shadow: 0 5px 15px rgba(67, 97, 238, 0.4);
 }
 
+.task-list-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  border-bottom: 2px solid var(--success);
+}
+
+.task-list-header h2 {
+  border-bottom: none;
+  margin: 0;
+}
+
+.task-list-header span {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background-color: var(--primary);
+  color: var(--light);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .tasks {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
